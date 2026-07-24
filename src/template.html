@@ -1,0 +1,470 @@
+<title>Call Sheet — Festival Submission Tracker</title>
+<style>
+  @font-face {
+    font-family: 'Archivo';
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+    src: url(data:font/woff2;base64,__ARCHIVO_B64__) format('woff2');
+  }
+  @font-face {
+    font-family: 'Bebas Neue';
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url(data:font/woff2;base64,__BEBAS_B64__) format('woff2');
+  }
+
+  :root {
+    --bg: #eff1ec;
+    --bg-raised: #ffffff;
+    --bg-sunken: #e3e6dd;
+    --ink: #1e211c;
+    --ink-muted: #5b5f55;
+    --ink-faint: #83866f;
+    --border: #d3d6c9;
+    --border-soft: #e0e2d8;
+    --accent: #a8681f;
+    --accent-strong: #7a4a17;
+    --accent-tint: #f2e2c9;
+    --good: #2f7a4e;
+    --good-bg: #dcefe1;
+    --good-border: #b9dcc4;
+    --warn: #a3550f;
+    --warn-bg: #f5e2c9;
+    --warn-border: #e6c495;
+    --closed: #83574c;
+    --closed-bg: #ece1dc;
+    --closed-border: #d9c6bd;
+    --neutral: #6a6d5f;
+    --neutral-bg: #e2e4d8;
+    --neutral-border: #cfd2c2;
+    --shadow: 0 1px 2px rgba(30,33,28,0.06), 0 6px 16px -8px rgba(30,33,28,0.12);
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15140f;
+      --bg-raised: #1d1b15;
+      --bg-sunken: #100f0b;
+      --ink: #ece8dc;
+      --ink-muted: #a39d89;
+      --ink-faint: #746f5e;
+      --border: #322f22;
+      --border-soft: #262418;
+      --accent: #e3ae52;
+      --accent-strong: #f2c876;
+      --accent-tint: #3a2c14;
+      --good: #74c393;
+      --good-bg: #1c2c22;
+      --good-border: #2e4635;
+      --warn: #e6a05c;
+      --warn-bg: #302213;
+      --warn-border: #4a3620;
+      --closed: #d1998c;
+      --closed-bg: #2c211d;
+      --closed-border: #453029;
+      --neutral: #a19c8a;
+      --neutral-bg: #26251c;
+      --neutral-border: #38361f;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15140f; --bg-raised: #1d1b15; --bg-sunken: #100f0b;
+    --ink: #ece8dc; --ink-muted: #a39d89; --ink-faint: #746f5e;
+    --border: #322f22; --border-soft: #262418;
+    --accent: #e3ae52; --accent-strong: #f2c876; --accent-tint: #3a2c14;
+    --good: #74c393; --good-bg: #1c2c22; --good-border: #2e4635;
+    --warn: #e6a05c; --warn-bg: #302213; --warn-border: #4a3620;
+    --closed: #d1998c; --closed-bg: #2c211d; --closed-border: #453029;
+    --neutral: #a19c8a; --neutral-bg: #26251c; --neutral-border: #38361f;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 24px -12px rgba(0,0,0,0.5);
+  }
+  :root[data-theme="light"] {
+    --bg: #eff1ec; --bg-raised: #ffffff; --bg-sunken: #e3e6dd;
+    --ink: #1e211c; --ink-muted: #5b5f55; --ink-faint: #83866f;
+    --border: #d3d6c9; --border-soft: #e0e2d8;
+    --accent: #a8681f; --accent-strong: #7a4a17; --accent-tint: #f2e2c9;
+    --good: #2f7a4e; --good-bg: #dcefe1; --good-border: #b9dcc4;
+    --warn: #a3550f; --warn-bg: #f5e2c9; --warn-border: #e6c495;
+    --closed: #83574c; --closed-bg: #ece1dc; --closed-border: #d9c6bd;
+    --neutral: #6a6d5f; --neutral-bg: #e2e4d8; --neutral-border: #cfd2c2;
+    --shadow: 0 1px 2px rgba(30,33,28,0.06), 0 6px 16px -8px rgba(30,33,28,0.12);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  a { color: var(--accent); }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ---------- Header ---------- */
+  header.masthead {
+    padding: 44px 20px 28px;
+    border-bottom: 1px solid var(--border);
+    background:
+      linear-gradient(180deg, var(--bg-sunken), var(--bg) 70%);
+  }
+  .masthead-inner { max-width: 980px; margin: 0 auto; }
+  .eyebrow {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+  h1.title {
+    font-family: 'Bebas Neue', 'Archivo', sans-serif;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    letter-spacing: 0.02em;
+    line-height: 0.95;
+    margin: 10px 0 12px;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  p.dek {
+    max-width: 62ch;
+    color: var(--ink-muted);
+    font-size: 15.5px;
+    margin: 0 0 22px;
+  }
+  .asof {
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    border-top: 1px dashed var(--border);
+    padding-top: 14px;
+    max-width: 68ch;
+  }
+  .asof strong { color: var(--ink-muted); font-weight: 600; }
+
+  /* ---------- Stat strip ---------- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 24px;
+  }
+  .stat {
+    background: var(--bg-raised);
+    padding: 14px 16px;
+  }
+  .stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.1rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .stat.is-open .num { color: var(--good); }
+  .stat.is-soon .num { color: var(--warn); }
+  .stat .label {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 3px;
+  }
+
+  /* ---------- Controls ---------- */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px) saturate(1.1);
+    -webkit-backdrop-filter: blur(10px) saturate(1.1);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+  }
+  .controls-inner { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .search-box {
+    position: relative;
+    flex: 1 1 220px;
+    min-width: 200px;
+  }
+  .search-box input {
+    width: 100%;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px 9px 32px;
+    font: inherit;
+    color: var(--ink);
+  }
+  .search-box input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+  .search-box svg {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    width: 15px; height: 15px; color: var(--ink-faint);
+  }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  button.chip {
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ink-muted);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  button.chip:hover { border-color: var(--accent); color: var(--ink); }
+  button.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  button.chip[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-raised);
+  }
+  .sort-select {
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 11.5px; color: var(--ink-faint); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+  /* ---------- Sections ---------- */
+  main { padding-top: 8px; }
+  section.group { margin-top: 34px; }
+  .group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .group-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    font-size: 1.5rem;
+    letter-spacing: 0.03em;
+    margin: 0;
+  }
+  .group-head .count {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+  .group-empty {
+    font-size: 13px; color: var(--ink-faint); font-style: italic; padding: 6px 0 2px;
+  }
+
+  /* ---------- Card ---------- */
+  .card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-soft);
+    border-left: 4px solid var(--neutral);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .card.st-open { border-left-color: var(--good); }
+  .card.st-soon { border-left-color: var(--warn); }
+  .card.st-closed { border-left-color: var(--closed); }
+  .card.st-tba { border-left-color: var(--neutral); }
+  .card.st-inactive { border-left-color: var(--border); opacity: 0.82; }
+  .card.st-info { border-left-color: var(--border); border-left-style: dashed; }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card-id h3 {
+    font-family: 'Archivo', sans-serif;
+    font-weight: 700;
+    font-size: 1.08rem;
+    margin: 0 0 2px;
+    color: var(--ink);
+  }
+  .card-id .loc {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+  .badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .badge.st-open { color: var(--good); background: var(--good-bg); border-color: var(--good-border); }
+  .badge.st-soon { color: var(--warn); background: var(--warn-bg); border-color: var(--warn-border); }
+  .badge.st-closed { color: var(--closed); background: var(--closed-bg); border-color: var(--closed-border); }
+  .badge.st-tba { color: var(--neutral); background: var(--neutral-bg); border-color: var(--neutral-border); }
+  .badge.st-inactive { color: var(--ink-faint); background: var(--bg-sunken); border-color: var(--border); }
+  .badge.st-info { color: var(--ink-faint); background: var(--bg-sunken); border-color: var(--border); font-style: italic; }
+
+  .card-meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px dashed var(--border-soft);
+    font-size: 13px;
+  }
+  .card-meta .m-item { display: flex; flex-direction: column; gap: 2px; min-width: 130px; }
+  .card-meta .m-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); }
+  .card-meta .m-val { color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .days-left { font-weight: 700; }
+  .days-left.st-soon { color: var(--warn); }
+  .days-left.st-open { color: var(--good); }
+
+  .card-concept { margin: 12px 0 0; color: var(--ink); font-size: 14px; }
+
+  .facts {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 6px 14px;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .facts dt { color: var(--ink-faint); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 1px; }
+  .facts dd { margin: 0; color: var(--ink); }
+  .facts dd.unconfirmed::after {
+    content: " (unconfirmed — verify before paying)";
+    color: var(--ink-faint);
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  .card-foot {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .card-foot a {
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .card-foot a:hover { text-decoration: underline; }
+  .note {
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-style: italic;
+    max-width: 60ch;
+  }
+
+  footer.page-foot {
+    max-width: 980px; margin: 40px auto 0; padding: 20px 20px 0;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--ink-faint);
+  }
+
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .facts { grid-template-columns: 100px 1fr; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">Filmmaker's desk reference</div>
+    <h1 class="title">Call Sheet</h1>
+    <p class="dek">A working compilation of film-festival submission windows — international A-list, genre &amp; regional, Indian, and AI-generated categories — with deadlines, entry fees, and what to prepare before you submit.</p>
+    <div class="asof">
+      <strong>Compiled July 24, 2026</strong> via direct research across official festival sites, FilmFreeway/Festhome listings, and trade press. Status badges recompute live against today's date. Fields marked <em>unconfirmed</em> could not be verified from public sources — double-check on the festival's own submission platform before paying an entry fee.
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="row">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="Search festival, city, or country…" autocomplete="off" />
+      </div>
+      <select id="sort" class="sort-select">
+        <option value="deadline">Sort: Soonest deadline</option>
+        <option value="az">Sort: A–Z</option>
+      </select>
+    </div>
+    <div class="row chip-group" id="cat-filters"></div>
+    <div class="row chip-group" id="status-filters"></div>
+    <div class="row legend">
+      <span><i style="background:var(--good)"></i>Open</span>
+      <span><i style="background:var(--warn)"></i>Closing ≤21 days</span>
+      <span><i style="background:var(--closed)"></i>Closed / this cycle passed</span>
+      <span><i style="background:var(--neutral)"></i>Next cycle TBA</span>
+      <span><i style="background:var(--border)"></i>Inactive / no open call</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <main id="main"></main>
+  <footer class="page-foot">
+    Built as a reference starting point, not a submission guarantee — festival rules, fees, and premiere requirements change without notice. Always confirm on the festival's official page before paying an entry fee or booking travel.
+  </footer>
+</div>
+
+<script>
+__DATA_SCRIPT__
+</script>
