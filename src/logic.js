@@ -10,6 +10,9 @@ const STATUS_META = {
 
 const SOON_WINDOW_DAYS = 21;
 const NOW = new Date();
+const SHORTLIST_KEY = "callsheet_shortlist_v1";
+const CURRENCY_ORDER = ["USD","EUR","GBP","CHF","CAD","INR"];
+const CURRENCY_SYMBOL = { USD:"$", EUR:"€", GBP:"£", CHF:"CHF ", CAD:"C$", INR:"₹" };
 
 function computeStatus(f) {
   if (f.disambig) return "info";
@@ -35,11 +38,31 @@ function daysLeftLabel(f, status) {
 // Precompute
 FESTIVALS.forEach(f => { f._status = computeStatus(f); });
 
+// ---------------- Shortlist (localStorage) ----------------
+function loadShortlist() {
+  try {
+    const raw = localStorage.getItem(SHORTLIST_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch (e) { return new Set(); }
+}
+function saveShortlist() {
+  try { localStorage.setItem(SHORTLIST_KEY, JSON.stringify([...shortlist])); } catch (e) {}
+}
+const shortlist = loadShortlist();
+
+function toggleShortlist(id) {
+  if (shortlist.has(id)) shortlist.delete(id); else shortlist.add(id);
+  saveShortlist();
+  render();
+}
+
 const state = {
   cat: "all",
   status: "all",
+  format: "all",
   q: "",
   sort: "deadline",
+  shortlistOnly: false,
 };
 
 function renderStats() {
@@ -56,6 +79,50 @@ function renderStats() {
   `;
 }
 
+function renderShortlistBar() {
+  const el = document.getElementById("shortlist-bar");
+  const items = FESTIVALS.filter(f => shortlist.has(f.id));
+  if (items.length === 0) {
+    el.innerHTML = `<div class="shortlist-empty">☆ Star festivals below to build a shortlist — this bar will total up their entry fees for you.</div>`;
+    el.classList.remove("has-items");
+    return;
+  }
+  el.classList.add("has-items");
+  const totals = {};
+  let unconfirmedCount = 0;
+  items.forEach(f => {
+    if (typeof f.feeAmount === "number" && f.feeCurrency) {
+      totals[f.feeCurrency] = (totals[f.feeCurrency] || 0) + f.feeAmount;
+    } else {
+      unconfirmedCount++;
+    }
+  });
+  const totalParts = CURRENCY_ORDER.filter(c => totals[c] !== undefined).map(c =>
+    `${CURRENCY_SYMBOL[c] || c + " "}${totals[c].toLocaleString()}`
+  );
+  Object.keys(totals).forEach(c => { if (!CURRENCY_ORDER.includes(c)) totalParts.push(`${c} ${totals[c].toLocaleString()}`); });
+  const totalStr = totalParts.length ? totalParts.join(" + ") : "$0";
+
+  el.innerHTML = `
+    <div class="shortlist-summary">
+      <strong>${items.length}</strong> shortlisted
+      <span class="sep">·</span>
+      Fee total: <strong>${totalStr}</strong>
+      ${unconfirmedCount ? `<span class="sep">·</span><span class="muted">${unconfirmedCount} unconfirmed fee${unconfirmedCount>1?'s':''} not included</span>` : ""}
+    </div>
+    <div class="shortlist-actions">
+      <button class="chip" id="shortlist-toggle-view" aria-pressed="${state.shortlistOnly}">View shortlist only</button>
+      <button class="chip chip-ghost" id="shortlist-clear">Clear</button>
+    </div>
+  `;
+  document.getElementById("shortlist-toggle-view").addEventListener("click", () => {
+    state.shortlistOnly = !state.shortlistOnly; render();
+  });
+  document.getElementById("shortlist-clear").addEventListener("click", () => {
+    shortlist.clear(); saveShortlist(); render();
+  });
+}
+
 function renderFilters() {
   const catEl = document.getElementById("cat-filters");
   const cats = [["all","All categories"], ...Object.entries(CATS)];
@@ -69,6 +136,12 @@ function renderFilters() {
     `<button class="chip" data-kind="status" data-key="${key}" aria-pressed="${state.status===key}">${label}</button>`
   ).join("");
 
+  const formatEl = document.getElementById("format-filters");
+  const formats = [["all","All formats"], ...Object.entries(FORMATS)];
+  formatEl.innerHTML = formats.map(([key,label]) =>
+    `<button class="chip" data-kind="format" data-key="${key}" aria-pressed="${state.format===key}">${label}</button>`
+  ).join("");
+
   catEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     state.cat = b.dataset.key; render();
   }));
@@ -77,10 +150,15 @@ function renderFilters() {
     state.status = (k === "hiatus") ? "hiatus_or_curated" : k;
     render();
   }));
+  formatEl.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    state.format = b.dataset.key; render();
+  }));
 }
 
 function matchesFilters(f) {
+  if (state.shortlistOnly && !shortlist.has(f.id)) return false;
   if (state.cat !== "all" && f.cat !== state.cat) return false;
+  if (state.format !== "all" && f.format !== state.format) return false;
   if (state.status !== "all") {
     if (state.status === "hiatus_or_curated") {
       if (!(f._status === "hiatus" || f._status === "curated")) return false;
@@ -119,14 +197,18 @@ function cardHTML(f) {
   const meta = STATUS_META[f._status];
   const dleft = daysLeftLabel(f, f._status);
   const isUnconfFee = f.fee && /unconfirmed/i.test(f.fee);
+  const starred = shortlist.has(f.id);
   return `
   <article class="card ${meta.cls.replace('st-','st-')}" data-status="${f._status}">
     <div class="card-top">
       <div class="card-id">
         <h3>${f.name}</h3>
-        <div class="loc"><span class="tag">${CATS[f.cat].split("—")[0].trim()}</span> ${f.loc}</div>
+        <div class="loc"><span class="tag">${CATS[f.cat].split("—")[0].trim()}</span>${f.format ? `<span class="tag tag-format">${FORMATS[f.format]}</span>` : ""} ${f.loc}</div>
       </div>
-      <span class="badge ${meta.cls}">${meta.label}</span>
+      <div class="card-top-right">
+        <button class="star-btn ${starred ? 'is-starred' : ''}" data-star-id="${f.id}" aria-pressed="${starred}" aria-label="${starred ? 'Remove from' : 'Add to'} shortlist" title="${starred ? 'Remove from' : 'Add to'} shortlist">${starred ? '★' : '☆'}</button>
+        <span class="badge ${meta.cls}">${meta.label}</span>
+      </div>
     </div>
     <div class="card-meta">
       <div class="m-item"><span class="m-label">Event dates</span><span class="m-val">${f.dates || "—"}</span></div>
@@ -147,20 +229,29 @@ function cardHTML(f) {
   </article>`;
 }
 
+function attachStarHandlers() {
+  document.querySelectorAll(".star-btn").forEach(b => {
+    b.addEventListener("click", () => toggleShortlist(b.dataset.starId));
+  });
+}
+
 function render() {
   renderStats();
+  renderShortlistBar();
   document.querySelectorAll('[data-kind="cat"]').forEach(b => b.setAttribute("aria-pressed", b.dataset.key === state.cat));
   document.querySelectorAll('[data-kind="status"]').forEach(b => {
     const active = (b.dataset.key === "hiatus") ? state.status === "hiatus_or_curated" : b.dataset.key === state.status;
     b.setAttribute("aria-pressed", active);
   });
+  document.querySelectorAll('[data-kind="format"]').forEach(b => b.setAttribute("aria-pressed", b.dataset.key === state.format));
 
   const main = document.getElementById("main");
-  const order = ["alist","genre","indian","ai"];
+  const order = ["alist","genre","indian","ai","script"];
   main.innerHTML = order.map(catKey => {
     const list = sortFestivals(FESTIVALS.filter(f => f.cat === catKey && matchesFilters(f)));
     if (state.cat !== "all" && state.cat !== catKey) return "";
     const totalInCat = FESTIVALS.filter(f => f.cat === catKey).length;
+    if (totalInCat === 0) return "";
     if (list.length === 0) {
       if (state.cat !== catKey && state.cat !== "all") return "";
       return `<section class="group"><div class="group-head"><h2>${CATS[catKey]}</h2><span class="count">0 / ${totalInCat}</span></div><p class="group-empty">No festivals in this view match the current filters.</p></section>`;
@@ -170,6 +261,7 @@ function render() {
       ${list.map(cardHTML).join("")}
     </section>`;
   }).join("");
+  attachStarHandlers();
 }
 
 document.getElementById("search").addEventListener("input", (e) => { state.q = e.target.value; render(); });

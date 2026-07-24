@@ -265,6 +265,34 @@
   .legend span { display: inline-flex; align-items: center; gap: 5px; }
   .legend i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
 
+  /* ---------- Shortlist bar ---------- */
+  #shortlist-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--accent-tint);
+    border: 1px solid var(--warn-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  #shortlist-bar:not(.has-items) {
+    background: var(--bg-sunken);
+    border-color: var(--border);
+    color: var(--ink-faint);
+    font-size: 12.5px;
+    font-style: italic;
+  }
+  .shortlist-summary { color: var(--ink); }
+  .shortlist-summary strong { font-variant-numeric: tabular-nums; }
+  .shortlist-summary .sep { margin: 0 8px; color: var(--ink-faint); }
+  .shortlist-summary .muted { color: var(--ink-faint); font-size: 12px; }
+  .shortlist-actions { display: flex; gap: 6px; }
+  button.chip.chip-ghost { background: transparent; }
+  button.chip.chip-ghost:hover { border-color: var(--closed); color: var(--closed); }
+
   /* ---------- Sections ---------- */
   main { padding-top: 8px; }
   section.group { margin-top: 34px; }
@@ -316,6 +344,20 @@
     gap: 12px;
     flex-wrap: wrap;
   }
+  .card-top-right { display: flex; align-items: center; gap: 8px; }
+  .star-btn {
+    font-size: 18px;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-faint);
+    padding: 2px 4px;
+    border-radius: 6px;
+  }
+  .star-btn:hover { color: var(--accent); background: var(--accent-tint); }
+  .star-btn.is-starred { color: var(--accent); }
+  .star-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   .card-id h3 {
     font-family: 'Archivo', sans-serif;
     font-weight: 700;
@@ -337,6 +379,11 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 1px 6px;
+  }
+  .tag-format {
+    color: var(--accent-strong);
+    border-color: var(--warn-border);
+    background: var(--accent-tint);
   }
   .badge {
     font-size: 11px;
@@ -436,6 +483,7 @@
 
 <div class="controls">
   <div class="controls-inner">
+    <div class="row" id="shortlist-bar"></div>
     <div class="row">
       <div class="search-box">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -448,6 +496,7 @@
     </div>
     <div class="row chip-group" id="cat-filters"></div>
     <div class="row chip-group" id="status-filters"></div>
+    <div class="row chip-group" id="format-filters"></div>
     <div class="row legend">
       <span><i style="background:var(--good)"></i>Open</span>
       <span><i style="background:var(--warn)"></i>Closing ≤21 days</span>
