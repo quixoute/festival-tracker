@@ -238,8 +238,8 @@ const FESTIVALS = [
 
 { id:"iffk", cat:"indian", name:"International Film Festival of Kerala (IFFK)", loc:"Thiruvananthapuram, India",
   dates:"30th ed. Dec 12–19, 2025 (past) · 31st ed. Dec 11–18, 2026",
-  deadline:"2026-edition submission dates not yet published — the 30th-ed. pattern (window Aug 12–Sep 14) suggests a similar Aug–Sep 2026 window",
-  deadlineISO:null, statusOverride:"tba",
+  deadline:"31st-edition window now open: submissions accepted from 10am Aug 1, 2026 through Sep 10, 2026, via iffk.in",
+  deadlineISO:"2026-09-10",
   concept:"Government-run (Kerala State Chalachitra Academy), one of India's most respected arthouse/world-cinema festivals, with a strong Malayalam and regional-language focus alongside a competitive international section.",
   format:"live-action", feeAmount:0, feeCurrency:"INR",
   fee:"No confirmed filmmaker submission fee (state-run festivals in Kerala are typically free to enter). Delegate/attendee registration is ₹1,000 general / ₹500 student — a separate attendee fee, not a submission fee.",
@@ -347,7 +347,7 @@ const FESTIVALS = [
   url:"https://miniboxoffice.com/mumbai-shorts-international-film-festival" },
 
 { id:"spiff", cat:"indian", name:"Smita Patil International Film Festival (SPIFF)", loc:"Pune, India (at NFAI)",
-  dates:"13th ed. confirmed for January 2027",
+  dates:"13th ed. confirmed for Jan 9–10, 2027",
   deadline:"Not yet published for the 13th edition",
   deadlineISO:null, statusOverride:"tba",
   concept:"A short-film-focused festival (fiction, non-fiction, animation, under 40 min) honoring Smita Patil's legacy, founded 2012 by Arogya Sena, with a signature 'Best Female Filmmaker – Smita Patil Award of Recognition' category.",
@@ -387,9 +387,9 @@ const FESTIVALS = [
   note:"Next cycle expected ~January 2027." },
 
 { id:"astanaaaiff", cat:"ai", name:"Astana AI Film Festival (AAIFF)", loc:"Astana, Kazakhstan",
-  dates:"Oct 1–3, 2026 (inaugural edition)",
-  deadline:"Window: May 25–Aug 15, 2026",
-  deadlineISO:"2026-08-15",
+  dates:"UPDATED: now reported as Sep 28–Oct 1, 2026 (inaugural edition) — a slight shift from the originally announced Oct 1–3 window",
+  deadline:"DEADLINE EXTENDED: originally Aug 15, 2026, now extended to Aug 31, 2026 (per organizer announcement, ~1,900 submissions from 90+ countries as of the extension)",
+  deadlineISO:"2026-08-31",
   concept:"The first major international festival dedicated purely to AI-generated short films, open worldwide regardless of studio access. Two tracks: Open Competition (any theme) and Thematic Competition (2026 theme: 'The Future Worth Living In').",
   format:"mixed", feeAmount:0, feeCurrency:"USD",
   fee:"Free",
